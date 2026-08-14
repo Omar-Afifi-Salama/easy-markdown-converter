@@ -1,0 +1,36 @@
+{
+    "name": "easy-markdown-converter",
+    "version": "1.0.0",
+    "description": "A custom markdown compiler and multi-format exporter",
+    "type": "module",
+    "main": "./dist/index.js",
+    "bin": {
+        "easy-markdown-converter": "./dist/index.js"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "start": "node ./dist/index.js",
+        "dev": "tsc && node ./dist/index.js",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "markdown",
+        "parser",
+        "compiler",
+        "pdf",
+        "html",
+        "cli"
+    ],
+    "author": "Omar Afifi",
+    "license": "MIT",
+    "optionalDependencies": {
+        "puppeteer": "^25.7.0"
+    },
+    "devDependencies": {
+        "@types/node": "^26.2.0",
+        "typescript": "^7.0.2"
+    }
+}
