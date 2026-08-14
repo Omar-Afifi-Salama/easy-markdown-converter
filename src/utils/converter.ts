@@ -9,16 +9,19 @@ import { wrapHTMLDocument } from "./htmlTemplate.js";
 import { ALLOWED_FORMATS, type OutputFormat } from "./pathResolver.js";
 
 /**
- * Helper to dynamically load Puppeteer safely
+ * Helper to dynamically load Puppeteer safely without static TS module resolution errors
  */
-async function loadPuppeteer() {
+async function loadPuppeteer(): Promise<any> {
     try {
-        const puppeteer = await import("puppeteer");
-
+        // Dynamic import evaluation avoids compile-time type checking when puppeteer is not installed
+        const importDynamic = new Function(
+            "modulePath",
+            "return import(modulePath)",
+        );
+        const puppeteer = await importDynamic("puppeteer");
         console.log(`Puppeteer loaded successfully.`);
-
         return puppeteer.default || puppeteer;
-    } catch (err) {
+    } catch {
         throw new Error(
             `\n❌ Puppeteer is required for exporting to PDF or Image formats.\n` +
                 `👉 Please install it by running: npm install puppeteer\n`,
