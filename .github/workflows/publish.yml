@@ -17,23 +17,28 @@ jobs:
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
-      
+
       - run: npm ci
       - run: npm run build
-      
+
+      # 1. Publish to npmjs.com (public global registry)
       - name: Publish to npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # 2. Publish to GitHub Packages (requires scoped package name)
       - name: Publish to GitHub Packages
         uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@Omar-Afifi-Salama'
-      - run: |
-          npm version --no-git-tag-version ${{ github.event.release.tag_name }}
+          scope: '@omar-afifi-salama'
+      - name: Scope package and publish to GitHub Packages
+        run: |
+          # Ensure package name has the GitHub user scope for GitHub Packages
+          npm pkg set name="@omar-afifi-salama/easy-markdown-converter"
+          npm version --no-git-tag-version --allow-same-version ${{ github.event.release.tag_name || '1.0.2' }}
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in GitHub token
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
