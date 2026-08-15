@@ -1,6 +1,6 @@
 {
     "name": "easy-markdown-converter",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A custom markdown compiler and multi-format exporter",
     "type": "module",
     "main": "./dist/index.js",
