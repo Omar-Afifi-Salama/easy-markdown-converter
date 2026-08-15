@@ -1,18 +1,18 @@
 {
     "name": "easy-markdown-converter",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A custom markdown compiler and multi-format exporter",
     "type": "module",
     "main": "./dist/index.js",
     "bin": {
-        "easy-markdown-converter": "./dist/index.js"
+        "easy-markdown-converter": "dist/index.js"
     },
     "files": [
         "dist"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Omar-Afifi-Salama/easy-markdown-converter.git"
+        "url": "git+https://github.com/Omar-Afifi-Salama/easy-markdown-converter.git"
     },
     "homepage": "https://github.com/Omar-Afifi-Salama/easy-markdown-converter#readme",
     "bugs": {
@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "@types/node": "^26.2.0",
+        "@types/puppeteer": "^5.4.7",
         "typescript": "^7.0.2"
     }
 }
