@@ -76,5 +76,3 @@ export interface ASTNode {
 }
 
 export type PatternRule = [RegExp, TokenType, Function?];
-
-export type OutputFormat = "html" | "pdf" | "image";

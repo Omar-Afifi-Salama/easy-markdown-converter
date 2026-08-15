@@ -1,6 +1,6 @@
 import Tokenizer from "./Tokenizer.js";
 
-import { type Token, type TokenType, type ASTNode } from "./types.js";
+import type { Token, TokenType, ASTNode } from "./types.js";
 
 export default class Parser {
     private tokens: Token[] = [];

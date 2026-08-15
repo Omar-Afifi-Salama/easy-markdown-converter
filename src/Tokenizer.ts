@@ -1,4 +1,4 @@
-import type { Token, TokenType, PatternRule, Metadata } from "./types.js";
+import type { Token, PatternRule, Metadata } from "./types.js";
 
 export default class Tokenizer {
     tokenizeBlocks(input: string): Token[] {
@@ -81,7 +81,7 @@ export default class Tokenizer {
             ],
         ];
 
-        return this.scanBlocks(normalized, blockPatterns);
+        return this.scan(normalized, blockPatterns, false);
     }
 
     tokenizeInline(input: string): Token[] {
@@ -98,7 +98,7 @@ export default class Tokenizer {
 
             // 3. IMAGE
             [
-                /^!\[([^\]]*)\]\(([^)]+)\)/,
+                /^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)/,
                 "IMAGE",
                 (match: string, alt: string, url: string) => ({
                     alt,
@@ -109,7 +109,7 @@ export default class Tokenizer {
 
             // 4. LINK
             [
-                /^\[([^\]]+)\]\(([^)]+)\)/,
+                /^\[((?:!\[[^\]]*\]\([^)]+\)|[^\]])+)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)/,
                 "LINK",
                 (match: string, text: string, url: string) => ({
                     value: text,
@@ -119,7 +119,7 @@ export default class Tokenizer {
 
             // 5. COLOR
             [
-                /^\[(?:color:)?(#?[a-zA-Z0-9]+)\]\{([^}]+)\}/,
+                /^\[(?:color:)?([a-zA-Z]+|#[0-9a-fA-F]{3,8})\]\{([^}]+)\}/,
                 "COLOR",
                 (match: string, color: string, content: string) => ({
                     color,
@@ -151,42 +151,6 @@ export default class Tokenizer {
         return this.scan(input, inlinePatterns, true);
     }
 
-    private scanBlocks(input: string, patterns: PatternRule[]): Token[] {
-        let tokens: Token[] = [];
-        let cursor = 0;
-
-        while (cursor < input.length) {
-            let matched = false;
-
-            for (const [regexp, type, handler] of patterns) {
-                // 🛑 Frontmatter is ONLY allowed at index 0 of the entire input
-                if (type === "FRONTMATTER" && cursor !== 0) {
-                    continue;
-                }
-
-                regexp.lastIndex = 0;
-                const match = regexp.exec(input.slice(cursor));
-
-                if (match && match.index === 0 && match[0].length > 0) {
-                    const tokenData = handler
-                        ? handler(...match)
-                        : { value: match[0] };
-
-                    tokens.push({ type, ...tokenData } as Token);
-                    cursor += match[0].length;
-                    matched = true;
-                    break;
-                }
-            }
-
-            if (!matched) {
-                cursor++;
-            }
-        }
-
-        return tokens;
-    }
-
     private scan(
         input: string,
         patterns: PatternRule[],
@@ -199,6 +163,10 @@ export default class Tokenizer {
             let matched = false;
 
             for (const [regexp, type, handler] of patterns) {
+                if (type === "FRONTMATTER" && cursor !== 0) {
+                    continue;
+                }
+
                 regexp.lastIndex = 0;
                 const match = regexp.exec(input.slice(cursor));
 
